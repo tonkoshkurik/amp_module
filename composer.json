@@ -9,7 +9,9 @@
         "erjanmx/laravel-api-auth": "^0.1.0",
         "fideloper/proxy": "~3.3",
         "laravel/framework": "5.5.*",
-        "laravel/tinker": "~1.0"
+        "laravel/tinker": "~1.0",
+        "nabarabane/amocrm": "~1.1",
+        "nikitakiselev/sendpulse": "^0.1.0"
     },
     "require-dev": {
         "filp/whoops": "~2.0",

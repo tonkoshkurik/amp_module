@@ -40,6 +40,11 @@ class LeadController extends Controller
 
       $lead = new Lead;
 
+      // package uppercase
+      if(strlen($validatedData['package'])) {
+        $validatedData['package'] = strtoupper( $validatedData['package'] );
+      }
+
       $lead->fill($validatedData);
 
       $lead->save();
@@ -92,15 +97,39 @@ class LeadController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the lead payed status
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Lead  $lead
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Lead $lead)
+    public function update()
     {
         //
+      $validatedData = request()->validate([
+        'name' => 'required|max:255',
+        'phone' => 'required|max:255',
+        'email' => 'required|email|max:255',
+        'season'=> 'required',
+        'package'=>''
+      ]);
+
+      // Check for dublicates
+
+      $update = \App\Lead::where('email', $validatedData['email'])->where('season', $validatedData['season'])->update([
+        'status' => null,
+        'payed' => true
+      ]);
+
+      if($update){
+        return ['status'=>'success'];
+      } else {
+        return ['status'=>'failed'];
+      }
+
+//      if($lead->count()){
+//        $lead->status = null;
+//        $lead->payed = true;
+//        $lead->save();
+//      }
+
     }
 
     /**

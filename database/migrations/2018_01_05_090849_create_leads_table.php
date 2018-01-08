@@ -22,7 +22,8 @@ class CreateLeadsTable extends Migration
             $table->string('package', 255)->nullable();
             $table->boolean('status')->nullable();
             $table->boolean('payed')->nullable();
-            $table->integer('amo_id')->nullable();
+            $table->integer('lead_id')->nullable();
+            $table->integer('contact_id')->nullable();
             $table->text('fields')->nullable();
             $table->timestamps();
         });
