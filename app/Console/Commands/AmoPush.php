@@ -10,6 +10,7 @@ use \AmoCRM\Lead;
 use \AmoCRM\Contact;
 //use \AmoCRM\Note;
 //use \AmoCRM\Task;
+use NikitaKiselev\SendPulse\SendPulse;
 
 class AmoPush extends Command
 {
@@ -102,7 +103,20 @@ class AmoPush extends Command
                 'WORK' // WORK - это ENUM для этого поля, список доступных значений смотрите в информации об аккаунте
               );
 
-            // Send to AMO
+            $email = array(
+              array(
+                "email"=> $l->email,
+                "variables"=> array(
+                  "name"=> $l->name,
+                  "phone" => $l->phone,
+                ),
+              ),
+            );
+
+            // Send to SendPulse
+            $e = SendPulse::addEmails(1465050, $email);
+
+            // Some pause and send to Amo Contact
             usleep(500000);
             $this->api->request(new Request(Request::SET, $contact));
 

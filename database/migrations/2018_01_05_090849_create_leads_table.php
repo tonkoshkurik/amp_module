@@ -20,8 +20,8 @@ class CreateLeadsTable extends Migration
             $table->string('phone', 30)->nullable();
             $table->string('season', 255)->nullable();
             $table->string('package', 255)->nullable();
-            $table->string('code', 150)->nullable();
-            $table->string('payment_type', 255)->nullable();
+//            $table->string('code', 150)->nullable();
+            $table->string('payment', 255)->nullable();
             $table->boolean('status')->nullable();
             $table->boolean('payed')->nullable();
             $table->integer('lead_id')->nullable();
