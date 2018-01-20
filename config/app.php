@@ -179,6 +179,7 @@ return [
         App\Providers\RouteServiceProvider::class,
 
         NikitaKiselev\SendPulse\SendPulseProvider::class,
+        Barryvdh\Cors\ServiceProvider::class,
 
 
     ],

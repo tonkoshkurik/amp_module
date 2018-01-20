@@ -23,4 +23,4 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/sms', 'SmsController@index');
+//Route::get('/sms', 'SmsController@index');

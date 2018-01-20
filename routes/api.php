@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+//use Illuminate\Support\Facades\Log;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,12 +18,23 @@ use Illuminate\Http\Request;
 //    return $request->user();
 //});
 
-Route::group(['prefix' => 'v1', 'middleware' => ['apiauth:ZHIRKILLER_ADMIN']], function () {
-  // not using because of client landing legacy
-});
+//Route::group(['prefix' => 'v1', 'middleware' => ['apiauth:ZHIRKILLER_ADMIN']], function () {
+//  // not using because of client landing legacy
+//});
 
-Route::group(['prefix' => 'leads'], function(){
+
+
+
+Route::post('webhook', 'SendPulse@confirm'
+  //function(Request $request){
+//  dd($request);
+//  Log::info($request);
+  // SendPulse@confirm
+//}
+);
+
+Route::group(['prefix' => 'leads' ], function(){
   //@todo add route for testing webhooks and after make a e-mail scheduling
-  Route::post('add', 'LeadController@add');
-  Route::post('update', 'LeadController@update');
+  Route::post('add', 'LeadController@add')->middleware('cors');
+  Route::post('update', 'LeadController@update')->middleware('cors');
 });

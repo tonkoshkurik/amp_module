@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use AmoCRM\Handler;
+use AmoCRM\Request as AmoRequest;
 
 class HomeController extends Controller
 {
@@ -23,6 +25,11 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+      $api = new Handler(env('AMO_DOMAIN'), env('AMO_LOGIN'));
+      echo "<pre>";
+      $amo = $api->request(new AmoRequest(AmoRequest::INFO))->result;
+      dd($amo->account->pipelines, $amo->account->custom_fields);
+//      print_r($amo->custom_fields);
+      return view('home');
     }
 }

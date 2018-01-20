@@ -14,7 +14,9 @@
                         </div>
                     @endif
 
-                    You are logged in!
+                    Show acc settings:
+
+
                 </div>
             </div>
         </div>

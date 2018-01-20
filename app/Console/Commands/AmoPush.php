@@ -48,7 +48,7 @@ class AmoPush extends Command
     public function handle()
     {
       try{
-        $api = new Handler('zhirkiller', 'info@zhirkiller.info');
+        $api = new Handler(env('AMO_DOMAIN'), env('AMO_LOGIN'));
 
         $this->api = $api;
 //         print_r($this->api->request(new Request(Request::INFO))->result);
@@ -72,7 +72,48 @@ class AmoPush extends Command
                 $this->api->config['LeadFieldPackage'],
                 $l->package,
                 strtoupper($l->package)
+              )
+              ->setCustomField(
+                $this->api->config['LeadFieldPackageCode'],
+                $l->package
               );
+
+              if(trim($l->payment) == 'p4'){
+                $lead
+                  ->setStatusId(17903028)
+                  ->setCustomField($this->api->config['LeadFieldPayment'],
+                    'Наличными',
+                    4545907
+                );
+              }
+
+            $l->package = strtolower($l->package);
+
+            $price = array(
+                'pro' => 877,
+                'standart' => 447,
+                'bonus' => 557,
+                'bezprizov+' => 347,
+                'bezprizov'  => 297,
+            );
+
+            $bb = array_key_exists($l->package, $price);
+            if($bb){
+                $lead
+                  ->setPrice($price[$l->package]);
+            }
+
+              /*  LeadFieldPayment
+                [4545899] => Visa/MasterCard
+                [4545901] => Приват24
+                [4545907] => Наличными
+
+                'pro' => 877
+                'standart' => 447
+                'bonus' => 557
+                'BezPrizov+' => 347
+                'BezPrizov'  => 297
+              */
 
             /* Отправляем данные в AmoCRM
             В случае успешного добавления в результате

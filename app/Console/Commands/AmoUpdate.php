@@ -9,6 +9,7 @@ use \AmoCRM\Request;
 use \AmoCRM\Lead;
 use \AmoCRM\Contact;
 use NikitaKiselev\SendPulse;
+use Illuminate\Support\Facades\Artisan;
 
 class AmoUpdate extends Command
 {
@@ -41,11 +42,6 @@ class AmoUpdate extends Command
     }
 
 
-    public function SendPulseApi(\NikitaKiselev\SendPulse\Contracts\SendPulseApi $sendPulseApi)
-    {
-      return $sendPulseApi;
-    }
-
     /**
      * Обновить лиды в Амо по которым мы получили оплату
      *
@@ -55,7 +51,7 @@ class AmoUpdate extends Command
     {
       try{
 
-        $api = new Handler('zhirkiller', 'info@zhirkiller.info');
+        $api = new Handler(env('AMO_DOMAIN'), env('AMO_LOGIN'));
 
         $this->api = $api;
 
@@ -64,11 +60,15 @@ class AmoUpdate extends Command
         // Here we first should process leads which was payed
         $inleads = \App\Lead::whereNull('status')->whereNotNull('payed')->get();
 
-        var_dump($inleads);
-
         if($inleads->count()) {
-          $this->api = $api;
+
+          usleep(500000);
+
+          Artisan::call('amo:push');
+
+          $i = 0;
           foreach ($inleads as $l) {
+
             $lead = new Lead();
 //            dd($l, $lead);
             $lead->setUpdate($l->lead_id, time() + 1)
@@ -85,24 +85,34 @@ class AmoUpdate extends Command
             );
 
             // Delete from SendPulse
-            $e = \SendPulse::removeEmails(1465050, $email);
+            $e = \SendPulse::removeEmails(1465050, array($l->email));
+//            dd($e);
 
             // Send to SendPulse Members Book
             $e = \SendPulse::addEmails(1465048, $email);
 
             // Update status in AMO
-            $amo = $this->api->request(new Request(Request::SET, $lead));
+            $amo = $api->request(new Request(Request::SET, $lead));
 
             var_dump($amo);
 
             $l->status = true;
             $l->save();
+            if($i>0){
+              usleep(500000);
+            }
+            $i++;
           }
         }
 
       } catch (\Exception $e) {
         echo $e->getMessage();
       }
+
+//    public function SendPulseApi(\NikitaKiselev\SendPulse\Contracts\SendPulseApi $sendPulseApi)
+//    {
+//      return $sendPulseApi;
+//    }
 
     }
 }
