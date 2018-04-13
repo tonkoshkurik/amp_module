@@ -1,36 +1,32 @@
 <?php
 
 namespace App\Console\Commands;
-
-use Illuminate\Console\Command;
-
 use \AmoCRM\Handler;
 use \AmoCRM\Request;
 use \AmoCRM\Lead;
 use \AmoCRM\Contact;
-//use \AmoCRM\Note;
-//use \AmoCRM\Task;
-use NikitaKiselev\SendPulse\SendPulse;
+use NikitaKiselev\SendPulse;
+use Illuminate\Console\Command;
 
-class AmoPush extends Command
+class AmoPayedLead extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'amo:push';
+    protected $signature = 'amo:payed';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Send leads to Amo';
+    protected $description = 'Command description';
+
+    public $settings;
 
     public $api;
-
-    private $settings;
 
     /**
      * Create a new command instance.
@@ -52,49 +48,26 @@ class AmoPush extends Command
     public function handle()
     {
       try{
+
         $api = new Handler(env('AMO_DOMAIN'), env('AMO_LOGIN'));
 
         $this->api = $api;
-//         print_r($this->api->request(new Request(Request::INFO))->result);
 
-        // Here we first should process leads which wasn't payed
-        $inleads = \App\Lead::whereNull('status')->whereNull('payed')->get();
-//        dd($this->settings);
-        // if we have some leads, let's try push them
-        if($inleads->count()){
+        $inleads = \App\Lead::whereNull('status')->whereNotNull('payed')->whereNull('lead_id')->get();
+
+        if($inleads->count()) {
+//          sleep(1);
+//        $i = 0;
           foreach ($inleads as $l) {
+
             $lead = new Lead();
             $lead
               /* Название сделки */
               ->setName('Заявка №' . $l->id )
-              /* Назначаем ответственного менеджера */
-              // @todo Need to replace $this->api->config in to My Settings CRUD
-              // let's go
-                // 1) I have class with settings
-                // 2) I have data about my acc about fields, and enteties
-                // 3)
-                // In settings I need to have ResponsibleUserID
-                // LeadPipelineStatusID => first stage
-                // LeadFieldPackage
-                // LeadFieldPackageCode
-                // Payment [
-                //        'p1' => 'карта',
-                //        'p2' => 'приват24'
-                //        'p4' => 'na kartu'
-                //  ];
-                // Oplata nalichnimi
-                //
-  //                 if(trim($l->payment) == 'p4'){
-  //                   $lead
-  //                     ->setStatusId(17903028) // Status for Leads which should be manualy checked
-  //                     ->setCustomField($this->api->config['LeadFieldPayment'],
-  //                       'Наличными',
-  //                       4545907
-  //                     );
-  //                 }
+
               ->setResponsibleUserId($this->settings['ResponsibleUserId'])
               /* Статус сделки */
-              ->setStatusId($this->settings['LeadStatusId'])
+              ->setStatusId(142)
               // Пакет участника
               ->setCustomField(
                 $this->settings['LeadFieldPackage'],
@@ -106,14 +79,14 @@ class AmoPush extends Command
                 $l->package
               );
 
-              if(trim($l->payment) == 'p4'){
-                $lead
-                  ->setStatusId($this->settings['OplataNalichnimi'] ) // 17903028) // Status for Leads which should be manualy checked
-                  ->setCustomField($this->settings['LeadFieldPayment'],
-                    'Наличными',
-                    4692858
+            if(trim($l->payment) == 'p4'){
+              $lead
+                ->setStatusId($this->settings['OplataNalichnimi'] ) // 17903028) // Status for Leads which should be manualy checked
+                ->setCustomField($this->settings['LeadFieldPayment'],
+                  'Наличными',
+                  4692858
                 );
-              }
+            }
 
             $l->package = strtolower($l->package);
 
@@ -121,33 +94,10 @@ class AmoPush extends Command
 
             $bb = array_key_exists($l->package, $price);
             if($bb){
-                $lead
-                  ->setPrice($price[$l->package]);
+              $lead
+                ->setPrice($price[$l->package]);
             }
 
-              /*  LeadFieldPayment
-                [4545899] => Visa/MasterCard
-                [4545901] => Приват24
-                [4545907] => Наличными
-
-                // Later will be cool to add check for Season Number
-                // and based on choose pipelines and settings for
-                //      "enums": {
-                //      "4692854": "Visa/MasterCard"
-                //      "4692856": "Приват24"
-                //     "4692858": "Наличными"
-                //      }
-
-                'pro' => 877
-                'standart' => 447
-                'bonus' => 557
-                'BezPrizov+' => 347
-                'BezPrizov'  => 297
-              */
-
-            /* Отправляем данные в AmoCRM
-            В случае успешного добавления в результате
-            будет объект новой сделки */
             $rrr = $this->api->request(new Request(Request::SET, $lead));
 
             var_dump($rrr);
@@ -189,7 +139,7 @@ class AmoPush extends Command
 
             // Send to SendPulse
             // $this->settings['fvn']['SendPulseLead']
-            $e = \SendPulse::addEmails($this->settings['SendPulseLead'], $email);
+            $e = \SendPulse::addEmails($this->settings['SendPulseMember'], $email);
 
             var_dump($e);
 
@@ -199,18 +149,15 @@ class AmoPush extends Command
 
             // If lead proceed, let's update it
             $l->lead_id = $lead;
-            $l->contact_id =  $this->api->last_insert_id;
+            $l->contact_id = $this->api->last_insert_id;
             $l->status = true;
             $l->save();
           }
-        }
 
+        }
 
       } catch (\Exception $e) {
         echo $e->getMessage();
       }
-
-
     }
-
 }

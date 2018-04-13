@@ -26,15 +26,24 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+
+      // Add new leads to Amo
       $schedule->command('amo:push')->everyMinute()->when(function () {
         $inleads = \App\Lead::whereNull('status')->whereNull('payed')->get();
         return $inleads->count() ? true : false;
       });
 
+      // Update Payed leads
       $schedule->command('amo:update')->everyMinute()->when(function () {
         $payedleads = \App\Lead::whereNull('status')->whereNotNull('payed')->get();
         return $payedleads->count() ? true : false;
       });
+
+      $schedule->command('amo:payed')->everyFiveMinutes()->when(function () {
+        $payedleads = \App\Lead::whereNull('status')->whereNotNull('payed')->whereNull('lead_id')->get();
+        return $payedleads->count() ? true : false;
+      });
+
     }
 
     /**

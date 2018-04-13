@@ -11,13 +11,13 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::get('/info', function () {
-  echo phpinfo();
-});
+//Route::get('/', function () {
+//    return view('welcome');
+//});
+//
+//Route::get('/info', function () {
+//  echo phpinfo();
+//});
 
 Auth::routes();
 

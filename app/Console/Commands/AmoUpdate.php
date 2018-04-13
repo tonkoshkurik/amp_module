@@ -10,6 +10,7 @@ use \AmoCRM\Lead;
 use \AmoCRM\Contact;
 use NikitaKiselev\SendPulse;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 
 class AmoUpdate extends Command
 {
@@ -31,6 +32,8 @@ class AmoUpdate extends Command
 
     public $SendPulse;
 
+    public $settings;
+
     /**
      * Create a new command instance.
      *
@@ -39,6 +42,8 @@ class AmoUpdate extends Command
     public function __construct()
     {
         parent::__construct();
+        $amo_conf = config('app.amo');
+        $this->settings = $amo_conf['mg2'];
     }
 
 
@@ -61,17 +66,28 @@ class AmoUpdate extends Command
         $inleads = \App\Lead::whereNull('status')->whereNotNull('payed')->get();
 
         if($inleads->count()) {
-
-          usleep(500000);
-
-          Artisan::call('amo:push');
-
+//          sleep(1);
           $i = 0;
+
           foreach ($inleads as $l) {
+
+            var_dump($l);
+
+            if(is_null($l->lead_id)){
+              continue;
+            }
+//              $o = Artisan::call('amo:push');
+
+//              Log::info($l->email);
+//              Log::info($o);
+
+//              return;
+//            }
 
             $lead = new Lead();
 //            dd($l, $lead);
             $lead->setUpdate($l->lead_id, time() + 1)
+              // Lead Payed
               ->setStatusId(142);
 
             $email = array(
@@ -85,11 +101,11 @@ class AmoUpdate extends Command
             );
 
             // Delete from SendPulse
-            $e = \SendPulse::removeEmails(1465050, array($l->email));
+            $e = \SendPulse::removeEmails($this->settings['SendPulseLead'], array($l->email));
 //            dd($e);
 
             // Send to SendPulse Members Book
-            $e = \SendPulse::addEmails(1465048, $email);
+            $e = \SendPulse::addEmails($this->settings['SendPulseMember'], $email);
 
             // Update status in AMO
             $amo = $api->request(new Request(Request::SET, $lead));
@@ -108,11 +124,6 @@ class AmoUpdate extends Command
       } catch (\Exception $e) {
         echo $e->getMessage();
       }
-
-//    public function SendPulseApi(\NikitaKiselev\SendPulse\Contracts\SendPulseApi $sendPulseApi)
-//    {
-//      return $sendPulseApi;
-//    }
 
     }
 }

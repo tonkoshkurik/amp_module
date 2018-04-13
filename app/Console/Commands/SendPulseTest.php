@@ -54,8 +54,8 @@ class SendPulseTest extends Command
      */
     public function handle()
     {
-//      $books = \SendPulse::listAddressBooks();
-//      dd($books);
+      $books = \SendPulse::listAddressBooks();
+      dd($books);
        $webhook = array (
         'leads' =>
           array (

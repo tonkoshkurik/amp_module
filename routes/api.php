@@ -25,13 +25,8 @@ use Illuminate\Http\Request;
 
 
 
-Route::post('webhook', 'SendPulse@confirm'
-  //function(Request $request){
-//  dd($request);
-//  Log::info($request);
-  // SendPulse@confirm
-//}
-);
+// webhook for confirmed leads
+Route::post('webhook', 'SendPulse@confirm');
 
 Route::group(['prefix' => 'leads' ], function(){
   //@todo add route for testing webhooks and after make a e-mail scheduling
