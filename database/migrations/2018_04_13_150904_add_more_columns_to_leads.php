@@ -17,8 +17,8 @@ class AddMoreColumnsToLeads extends Migration
       if (Schema::hasTable('leads')) {
 
         Schema::table('leads', function (Blueprint $table) {
-          $table->string('address' );
-          $table->string('colour' );
+          $table->string('address' )-nullable();
+          $table->string('colour' )->nullable();
         });
 
       }

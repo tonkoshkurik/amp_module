@@ -28,7 +28,7 @@ class HomeController extends Controller
       $api = new Handler(env('AMO_DOMAIN'), env('AMO_LOGIN'));
       echo "<pre>";
       $amo = $api->request(new AmoRequest(AmoRequest::INFO))->result;
-      dd($amo->account->pipelines, $amo->account->custom_fields);
+      dd($amo->account->pipelines, $amo->account->custom_fields, $amo->account);
 //      print_r($amo->custom_fields);
       return view('home');
     }

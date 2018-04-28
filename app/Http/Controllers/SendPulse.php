@@ -12,12 +12,13 @@ class SendPulse extends Controller
   {
     $lead_id = $request["leads"]["status"][0]["id"];
 
-    Log::info($request["leads"]["status"]);
-    Log::info($lead_id);
+//    Log::info($request["leads"]["status"]);
+//    Log::info($lead_id);
     $amo_conf = config('app.amo');
-    $settings = $amo_conf['fvn'];
 
-    Log::info($settings["SendPulseMember"]);
+    $settings = $amo_conf['mg2'];
+
+//    Log::info($settings["SendPulseMember"]);
 
     $lead = \App\Lead::where('lead_id', $lead_id);
 

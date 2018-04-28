@@ -92,20 +92,27 @@ class AmoPush extends Command
   //                       4545907
   //                     );
   //                 }
+
+
+                //
               ->setResponsibleUserId($this->settings['ResponsibleUserId'])
               /* Статус сделки */
               ->setStatusId($this->settings['LeadStatusId'])
               // Пакет участника
-              ->setCustomField(
-                $this->settings['LeadFieldPackage'],
-                $l->package,
-                strtoupper($l->package)
-              )
+//              ->setCustomField(
+//                $this->settings['LeadFieldPackage'],
+//                $l->package,
+//                strtolower($l->package)
+//              )
               ->setCustomField(
                 $this->settings['LeadFieldPackageCode'],
-                $l->package
+                strtoupper($l->package)
               );
 
+            // @todo set responsible ID to Delivery manager if package == 'kokos'.toUpperCase() || 'FISTASHKI'
+//              if(strtolower($l->package) == 'kokos' OR strtolower($l->package) == 'fistashki') {
+//                $lead->setResponsibleUserId($this->settings['ResponsibleDeliveryMANAGER']);
+//              }
               if(trim($l->payment) == 'p4'){
                 $lead
                   ->setStatusId($this->settings['OplataNalichnimi'] ) // 17903028) // Status for Leads which should be manualy checked
@@ -113,6 +120,17 @@ class AmoPush extends Command
                     'Наличными',
                     4692858
                 );
+              }
+
+              if($l->colour){
+                $lead
+                  ->setCustomField($this->settings['LeadFieldColour'],
+                    $l->colour);
+              }
+              if($l->address){
+                $lead
+                  ->setCustomField($this->settings['LeadFieldAddress'],
+                    $l->address);
               }
 
             $l->package = strtolower($l->package);
@@ -150,7 +168,6 @@ class AmoPush extends Command
             будет объект новой сделки */
             $rrr = $this->api->request(new Request(Request::SET, $lead));
 
-            var_dump($rrr);
 
             /* Сохраняем ID новой сделки для использования в дальнейшем */
             $lead = $this->api->last_insert_id;
@@ -161,6 +178,7 @@ class AmoPush extends Command
               /* Имя */
               ->setName($l->name)
               /* Назначаем ответственного менеджера */
+
               ->setResponsibleUserId($this->settings['ResponsibleUserId'])
               /* Привязка созданной сделки к контакту */
               ->setLinkedLeadsId($lead)
@@ -177,6 +195,10 @@ class AmoPush extends Command
                 'WORK' // WORK - это ENUM для этого поля, список доступных значений смотрите в информации об аккаунте
               );
 
+//            if(strtolower($l->package) == 'kokos' OR strtolower($l->package) == 'fistashki') {
+//              $contact->setResponsibleUserId($this->settings['ResponsibleDeliveryMANAGER']);
+//            }
+
             $email = array(
               array(
                 "email"=> $l->email,
@@ -190,8 +212,6 @@ class AmoPush extends Command
             // Send to SendPulse
             // $this->settings['fvn']['SendPulseLead']
             $e = \SendPulse::addEmails($this->settings['SendPulseLead'], $email);
-
-            var_dump($e);
 
             // Some pause and send to Amo Contact
             usleep(500000);
@@ -209,8 +229,6 @@ class AmoPush extends Command
       } catch (\Exception $e) {
         echo $e->getMessage();
       }
-
-
     }
 
 }

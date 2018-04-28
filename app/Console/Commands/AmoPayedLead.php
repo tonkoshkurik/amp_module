@@ -56,8 +56,6 @@ class AmoPayedLead extends Command
         $inleads = \App\Lead::whereNull('status')->whereNotNull('payed')->whereNull('lead_id')->get();
 
         if($inleads->count()) {
-//          sleep(1);
-//        $i = 0;
           foreach ($inleads as $l) {
 
             $lead = new Lead();
@@ -76,7 +74,7 @@ class AmoPayedLead extends Command
               )
               ->setCustomField(
                 $this->settings['LeadFieldPackageCode'],
-                $l->package
+                strtoupper($l->package)
               );
 
             if(trim($l->payment) == 'p4'){
@@ -93,14 +91,13 @@ class AmoPayedLead extends Command
             $price =  $this->settings['price'];
 
             $bb = array_key_exists($l->package, $price);
+
             if($bb){
               $lead
                 ->setPrice($price[$l->package]);
             }
 
             $rrr = $this->api->request(new Request(Request::SET, $lead));
-
-            var_dump($rrr);
 
             /* Сохраняем ID новой сделки для использования в дальнейшем */
             $lead = $this->api->last_insert_id;
@@ -140,8 +137,6 @@ class AmoPayedLead extends Command
             // Send to SendPulse
             // $this->settings['fvn']['SendPulseLead']
             $e = \SendPulse::addEmails($this->settings['SendPulseMember'], $email);
-
-            var_dump($e);
 
             // Some pause and send to Amo Contact
             usleep(500000);

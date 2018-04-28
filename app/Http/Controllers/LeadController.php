@@ -26,8 +26,6 @@ class LeadController extends Controller
         'phone' => 'required|max:255',
         'email' => 'required|email|max:255',
         'season'=> 'required',
-        'package'=>'',
-        'payment'=>''
       ]);
 
       if ($validator->fails()) {
@@ -39,11 +37,18 @@ class LeadController extends Controller
         'phone' => 'required|max:255',
         'email' => 'required|email|max:255',
         'season'=> 'required',
-        'package'=>'',
-        'payment'=>''
+        'package'=> '',
+        'payment'=> '',
+        'address' => '',
+        'colour' => ''
       ]);
 
       $validatedData['phone'] = preg_replace('/\s+/', '', $validatedData['phone']);
+
+      // package uppercase
+//      if(strlen($validatedData['package'])) {
+//        $validatedData['package'] = strtoupper( $validatedData['package'] );
+//      }
 
       return $validatedData;
     }
@@ -72,11 +77,6 @@ class LeadController extends Controller
 
       $lead = new Lead;
 
-      // package uppercase
-      if(strlen($validatedData['package'])) {
-        $validatedData['package'] = strtoupper( $validatedData['package'] );
-      }
-
       $lead->fill($validatedData);
 
       $lead->save();
@@ -92,32 +92,6 @@ class LeadController extends Controller
      */
     public function update()
     {
-      // simple validation
-//      $validator = Validator::make(request()->all(), [
-//        'name' => 'required|max:255',
-//        'phone' => 'required|max:255',
-//        'email' => 'required|email|max:255',
-//        'season'=> 'required',
-//        'package'=>'',
-//        'payment'=>''
-//      ]);
-//
-//      if ($validator->fails()) {
-//        return response()->json(['status'=>'validation error'], 422);
-//      }
-//
-//      $validatedData = request()->validate([
-//        'name' => 'required|max:255',
-//        'phone' => 'required|max:255',
-//        'email' => 'required|email|max:255',
-//        'season'=> 'required',
-//        'package'=>'',
-//        'payment'=>''
-//      ]);
-//
-//      $validatedData['phone'] = preg_replace('/\s+/', '', $validatedData['phone']);
-
-
       $validatedData = $this->lead_validator();
       // package uppercase
 

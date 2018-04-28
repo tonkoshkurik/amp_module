@@ -273,18 +273,21 @@ return [
       'mg2' => [
         'season' => 18,
         'ResponsibleUserId' => 1620216, //ID ответственного менеджера
+        'ResponsibleDeliveryMANAGER' => 2340777,
         'LeadStatusId' => 19308063, // ID первого статуса сделки
         'ContactFieldPhone' => 1651996, // ID поля номера телефона
         'ContactFieldEmail' => 1651998, // ID поля email
         'LeadFieldPackage' => 1961592, // ID for package field
         'LeadFieldPayment' => 1961298,  // ID for Payment options
-        'LeadFieldPackageCode'=> 1968592, // ID for package code
-        'OplataNalichnimi'=> 19308069,  // ID for status оплаты наличными
+        'LeadFieldPackageCode' => 1968592, // ID for package code
+        'LeadFieldColour' => 1973932,  // ID for Leadfield colour
+        'LeadFieldAddress' => 1973930,  // ID for LeadField address
+        'OplataNalichnimi' => 19308069,  // ID for status оплаты наличными
         'price' => array(
-          'kokos' => 467,
-          'fistashki' => 457,
-          'arahis' => 357,
-          'gretskiy' => 307
+          'kokos' => 507,
+          'fistashki' => 487,
+          'arahis' => 377,
+          'gretskiy' => 337
         ),
         'SendPulseLead' => 1672600,
         'SendPulseMember' => 1672586,

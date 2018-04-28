@@ -71,7 +71,6 @@ class AmoUpdate extends Command
 
           foreach ($inleads as $l) {
 
-            var_dump($l);
 
             if(is_null($l->lead_id)){
               continue;
@@ -110,7 +109,6 @@ class AmoUpdate extends Command
             // Update status in AMO
             $amo = $api->request(new Request(Request::SET, $lead));
 
-            var_dump($amo);
 
             $l->status = true;
             $l->save();
