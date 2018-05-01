@@ -86,6 +86,17 @@ class AmoPayedLead extends Command
                 );
             }
 
+              if($l->colour){
+                $lead
+                  ->setCustomField($this->settings['LeadFieldColour'],
+                    $l->colour);
+              }
+              if($l->address){
+                $lead
+                  ->setCustomField($this->settings['LeadFieldAddress'],
+                    $l->address);
+              }
+
             $l->package = strtolower($l->package);
 
             $price =  $this->settings['price'];

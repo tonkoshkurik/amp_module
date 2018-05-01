@@ -16,6 +16,7 @@
 
                     Show acc settings:
 
+                    {{ print_r($settings) }}
 
                 </div>
             </div>

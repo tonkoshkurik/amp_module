@@ -55,11 +55,11 @@ class AmoPush extends Command
         $api = new Handler(env('AMO_DOMAIN'), env('AMO_LOGIN'));
 
         $this->api = $api;
-//         print_r($this->api->request(new Request(Request::INFO))->result);
+/////// print_r($this->api->request(new Request(Request::INFO))->result);
 
-        // Here we first should process leads which wasn't payed
+/////// Here we first should process leads which wasn't payed
         $inleads = \App\Lead::whereNull('status')->whereNull('payed')->get();
-//        dd($this->settings);
+/////// dd($this->settings);
         // if we have some leads, let's try push them
         if($inleads->count()){
           foreach ($inleads as $l) {
@@ -84,17 +84,15 @@ class AmoPush extends Command
                 //  ];
                 // Oplata nalichnimi
                 //
-  //                 if(trim($l->payment) == 'p4'){
-  //                   $lead
-  //                     ->setStatusId(17903028) // Status for Leads which should be manualy checked
-  //                     ->setCustomField($this->api->config['LeadFieldPayment'],
-  //                       'Наличными',
-  //                       4545907
-  //                     );
-  //                 }
+//                 if(trim($l->payment) == 'p4'){
+//                   $lead
+//                     ->setStatusId(17903028) // Status for Leads which should be manualy checked
+//                     ->setCustomField($this->api->config['LeadFieldPayment'],
+//                       'Наличными',
+//                       4545907
+//                     );
+//                 }
 
-
-                //
               ->setResponsibleUserId($this->settings['ResponsibleUserId'])
               /* Статус сделки */
               ->setStatusId($this->settings['LeadStatusId'])
@@ -109,7 +107,7 @@ class AmoPush extends Command
                 strtoupper($l->package)
               );
 
-            // @todo set responsible ID to Delivery manager if package == 'kokos'.toUpperCase() || 'FISTASHKI'
+//////////////  @todo set responsible ID to Delivery manager if package == 'kokos'.toUpperCase() || 'FISTASHKI'
 //              if(strtolower($l->package) == 'kokos' OR strtolower($l->package) == 'fistashki') {
 //                $lead->setResponsibleUserId($this->settings['ResponsibleDeliveryMANAGER']);
 //              }
@@ -138,6 +136,7 @@ class AmoPush extends Command
             $price =  $this->settings['price'];
 
             $bb = array_key_exists($l->package, $price);
+
             if($bb){
                 $lead
                   ->setPrice($price[$l->package]);

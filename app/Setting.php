@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Setting extends Model
 {
-
   // Let's say that all leads will came in some predicted array,
   // we just need to define it before and save in some JSON object
 
